@@ -52,7 +52,7 @@ class DatasetCache(Dataset):
         self.data = pd.read_csv(csv_file)
         self.load = seg_transforms(roi)
 
-        base_path = '/data/mskacquisition/howard_temp/MAPSS_data'
+        base_path = '/data/mskacquisition/MAPSS_data'
 
         self.cache_dir = cache_dir
         self.cache_dataset = data.PersistentDataset(
@@ -83,8 +83,8 @@ parser.add_argument('--end_idx', type=int, help='Path to the input file')
 args = parser.parse_args()
 
 roi = [96, 96, 96]
-csv_file = '/data/mskacquisition/howard_temp/TBRecon/dataset/MAPSS/final_binary.csv'
-cache_dir = '/data/mskacquisition/howard_temp/MAPSS_data/MAPSS_cache_dir_binary'
+csv_file = '/data/mskacquisition/TBRecon/dataset/MAPSS/final_binary.csv'
+cache_dir = '/data/mskacquisition/MAPSS_data/MAPSS_cache_dir_binary'
 
 train_ds = DatasetCache(
     roi, 

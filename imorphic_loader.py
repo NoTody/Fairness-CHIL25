@@ -5,7 +5,6 @@ import cv2
 
 from collections import OrderedDict
 
-# Hoyer 2024
 # ****** Dataset mask key: 'datastruct' ******** #
 
 imorphics_assign = OrderedDict([

@@ -48,22 +48,6 @@ def _make_nConv(in_channel, depth, act, double_chnnel=False):
     return nn.Sequential(layer1,layer2)
 
 
-# class InputTransition(nn.Module):
-#     def __init__(self, outChans, elu):
-#         super(InputTransition, self).__init__()
-#         self.conv1 = nn.Conv3d(1, 16, kernel_size=5, padding=2)
-#         self.bn1 = ContBatchNorm3d(16)
-#         self.relu1 = ELUCons(elu, 16)
-#
-#     def forward(self, x):
-#         # do we want a PRELU here as well?
-#         out = self.bn1(self.conv1(x))
-#         # split input in to 16 channels
-#         x16 = torch.cat((x, x, x, x, x, x, x, x,
-#                          x, x, x, x, x, x, x, x), 1)
-#         out = self.relu1(torch.add(out, x16))
-#         return out
-
 class DownTransition(nn.Module):
     def __init__(self, in_channel,depth, act):
         super(DownTransition, self).__init__()

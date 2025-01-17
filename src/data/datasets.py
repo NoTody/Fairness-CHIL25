@@ -13,38 +13,6 @@ from transformers import AutoTokenizer
 
 from src.utils.misc import create_dataset
 
-def collate_fn_batch_encoding(batch, tokenizer, text_len):
-    images, texts = [], []
-    for sample in batch:
-        images.append(sample[0]['image'])
-        texts.append(sample[0]['report'][0])
-    
-    images = torch.cat(images, dim=0)
-    images = images.unsqueeze(dim=1) # add channel dim
-    # print(f"texts: {len(texts)}")
-    # print("-------------------------------------")
-    #images, texts = zip(*batch)
-    #image_encodings, text_encodings = images, texts
-    # combine images
-
-    # combine texts
-
-    #print(list(texts))
-
-    text_encodings = tokenizer(
-            list(texts),
-            max_length=text_len,
-            padding="max_length",
-            truncation=True,
-            return_special_tokens_mask=False,
-            return_tensors="pt")
-    
-    #print(f"text_encodings: {text_encodings}")
-    #text_encodings.append(text_encoding)
-
-    image_encodings = images
-    
-    return image_encodings, text_encodings
 
 ############################
 # Fine-Tuning
@@ -62,20 +30,12 @@ def get_dataloaders(config, augs=[], filter=False):
         pd.read_csv(config.DATA.VAL_CSV_PATH), \
         pd.read_csv(config.DATA.TEST_CSV_PATH)
     
+    # Filter by sub-cohorts
     if filter==True:
-        #df_test = df_test[df_test['gender']=='M']
         df_test = df_test
         #df_test = df_test[(df_test['weight']>70) & (df_test['weight']<90)]
         #df_test = df_test[(df_test['age']>30) & (df_test['age']<50)]
         #df_test = df_test[df_test['sex']=='M']
-    #df_test = df_test[df_test['race']=='White']
-    #df_test = df_test[df_test['age']<=70]
-
-    #df_test = df_test[(df_test['BMI']>28) & (df_test['BMI']<34)]
-        
-    # df_train = df_train[df_train['dataset']=='TBRecon']
-    # df_val = df_val[df_val['dataset']=='TBRecon']
-    # df_test = df_test[df_test['dataset']=='TBRecon']
 
     if 'ssl' in config.MODE:
         img_train, dataset_train = list(df_train['img_path']), list(df_train['dataset'])
@@ -97,8 +57,8 @@ def get_dataloaders(config, augs=[], filter=False):
     base_path = config.DATA.BASE_PATH
 
     if 'ssl' in config.MODE:
-        base_path_oai = '/data/mskacquisition/howard_temp/OAI_data'
-        base_path_tbrecon = '/data/mskacquisition/howard_temp/TBRecon_data'
+        base_path_oai = '/data/mskacquisition/OAI_data'
+        base_path_tbrecon = '/data/mskacquisition/TBRecon_data'
 
         img_train = [os.path.join(base_path_oai, path) if dataset == 'OAI' \
                      else os.path.join(base_path_tbrecon, path) \
@@ -144,16 +104,7 @@ def get_dataloaders(config, augs=[], filter=False):
     num_tasks = dist.get_world_size()
     global_rank = dist.get_rank()
     
-    if config.MODE == 'mm_pretrain':
-        collate_fn = collate_fn_batch_encoding
-        token_model = "microsoft/BiomedCLIP-PubMedBERT_256-vit_base_patch16_224"
-        tokenizer = AutoTokenizer.from_pretrained(token_model, use_fast=True)
-    # Create Dataloaders
     # Train
-    # train_ds = data.Dataset(
-    #     data=train_files, 
-    #     transform=imtrans, 
-    # )
     train_ds = data.PersistentDataset(
         data=train_files, 
         transform=imtrans, 
@@ -171,15 +122,9 @@ def get_dataloaders(config, augs=[], filter=False):
         sampler=sampler_train,
         num_workers=config.DATA.NUM_WORKERS,
         pin_memory=config.DATA.PIN_MEMORY,
-        # collate_fn=partial(collate_fn, tokenizer=tokenizer, text_len=config.MM.TEXT_LEN) \
-        #     if config.MODE == 'mm_pretrain' else None,
     )
     
     # Validate
-    # val_ds = data.Dataset(
-    #     data=val_files, 
-    #     transform=imvals, 
-    # )
     val_ds = data.PersistentDataset(
         data=val_files, 
         transform=imvals, 
@@ -197,15 +142,9 @@ def get_dataloaders(config, augs=[], filter=False):
         sampler=sampler_val,
         num_workers=config.DATA.NUM_WORKERS,
         pin_memory=config.DATA.PIN_MEMORY,
-        # collate_fn=partial(collate_fn, tokenizer=tokenizer, text_len=config.MM.TEXT_LEN) \
-        #     if config.MODE == 'mm_pretrain' else None,
     )
     
     # Test
-    # test_ds = data.Dataset(
-    #     data=test_files, 
-    #     transform=imtests, 
-    # )
     test_ds = data.PersistentDataset(
         data=test_files, 
         transform=imtests, 
@@ -223,8 +162,6 @@ def get_dataloaders(config, augs=[], filter=False):
         sampler=sampler_test,
         num_workers=config.DATA.NUM_WORKERS,
         pin_memory=config.DATA.PIN_MEMORY,
-        # collate_fn=partial(collate_fn, tokenizer=tokenizer, text_len=config.MM.TEXT_LEN) \
-        #     if config.MODE == 'mm_pretrain' else None,
     )
     
     return train_loader, val_loader, test_loader

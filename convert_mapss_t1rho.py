@@ -25,7 +25,7 @@ trans = transforms.Compose(
     ]
 )
 
-base_path = '/data/mskacquisition/howard_temp/MAPSS_data/MAPSS_T1rho/'
+base_path = '/data/mskacquisition/MAPSS_data/MAPSS_T1rho/'
 
 files = os.listdir(base_path)
 
@@ -47,7 +47,7 @@ for f in files:
         't1rho': np.squeeze(image['image']),
     }
 
-    base_path = "/data/mskacquisition/howard_temp/MAPSS_data/MAPSS_T1rho/"
+    base_path = "/data/mskacquisition/MAPSS_data/MAPSS_T1rho/"
     f_name = f"{f}.pkl"
     save_path = os.path.join(base_path, f_name)
 
