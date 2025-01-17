@@ -1,0 +1,38 @@
+MODEL:
+  BACKBONE: swinunetr
+  PRETRAINED: None
+  DIR: /data/mskacquisition/TBRecon/model_saved
+  SAVE_NAME: swinunetr_MAPSS_bs2_softmax_crop96_cartilage_df_binary_short_ep800.pt
+  USE_LOAD_EPOCH: False
+  ROI: [96, 96, 96]
+  NUM_SAMPLES: 2
+  NUM_CLASSES: 2
+  SW_BATCH_SIZE: 4
+  INFER_OVERLAP: 0.7
+  CLIP_GRAD: 1.0
+DATA:
+  BASE_PATH: /data/mskacquisition/MAPSS_data
+  TRAIN_CSV_PATH: /data/mskacquisition/TBRecon/dataset/MAPSS/train_binary.csv
+  VAL_CSV_PATH: /data/mskacquisition/TBRecon/dataset/MAPSS/val_binary.csv
+  TEST_CSV_PATH: /data/mskacquisition/TBRecon/dataset/MAPSS/test_binary_demo.csv
+  NUM_WORKERS: 4
+  CACHE_DIR: /data/mskacquisition/MAPSS_data/MAPSS_cache_dir_binary
+  CACHE_RATE: 1.0
+  CROP_RATE: 1.0
+  SEG_TYPE: cartilage
+TRAIN:
+  MAX_EPOCHS: 800
+  WARMUP_EPOCHS: 20
+  VAL_EVERY: 20
+  BASE_LR: 1.0e-4
+  MIN_LR: 1.0e-8
+  WEIGHT_DECAY: 1.0e-5
+  LOSS: dice_focal
+WANDB:
+  WANDB_ENABLE: False
+  PROJECT: swinunetr_MAPSS_bs2_softmax_crop96_cartilage_df_binary_short_ep800
+LOG:
+  FILENAME: swinunetr_MAPSS_bs2_softmax_crop96_cartilage_df_binary_short_ep800
+MODE: 'finetune'
+SEED: 3074
+OUTPUT: /data/mskacquisition/TBRecon/configs/swinunetr/json

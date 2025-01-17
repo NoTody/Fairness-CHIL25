@@ -1,0 +1,38 @@
+MODEL:
+  BACKBONE: swinunetr
+  PRETRAINED: None
+  DIR: /data/mskacquisition/TBRecon/model_saved
+  SAVE_NAME: swinunetr_TBRecon_bs2_softmax_crop96_snorm0.5_bone_df_ep800.pt
+  USE_LOAD_EPOCH: False
+  ROI: [96, 96, 96]
+  NUM_SAMPLES: 2
+  NUM_CLASSES: 4
+  SW_BATCH_SIZE: 4
+  INFER_OVERLAP: 0.7
+  CLIP_GRAD: 1.0
+DATA:
+  BASE_PATH: /data/mskacquisition/TBRecon_data
+  TRAIN_CSV_PATH: /data/mskacquisition/TBRecon/dataset/TBRecon/train.csv
+  VAL_CSV_PATH: /data/mskacquisition/TBRecon/dataset/TBRecon/val.csv
+  TEST_CSV_PATH: /data/mskacquisition/TBRecon/dataset/TBRecon/test_demo.csv
+  NUM_WORKERS: 4
+  CACHE_DIR: /data/mskacquisition/TBRecon_data/TBRecon_cache_dir
+  CACHE_RATE: 1.0
+  CROP_RATE: 1.0
+  SEG_TYPE: bone
+TRAIN:
+  MAX_EPOCHS: 800
+  WARMUP_EPOCHS: 20
+  VAL_EVERY: 20
+  BASE_LR: 1.0e-4
+  MIN_LR: 1.0e-8
+  WEIGHT_DECAY: 1.0e-5
+  LOSS: dice_focal
+WANDB:
+  WANDB_ENABLE: False
+  PROJECT: swinunetr_TBRecon_bs2_softmax_crop96_snorm0.5_bone_df_ep800
+LOG:
+  FILENAME: swinunetr_TBRecon_bs2_softmax_crop96_snorm0.5_bone_df_ep800
+MODE: 'finetune'
+SEED: 3074
+OUTPUT: /data/mskacquisition/TBRecon/configs/swinunetr/json
